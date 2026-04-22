@@ -16,8 +16,8 @@ type MovieRepository interface {
 	GetByID(id uint) (*models.Movie, error)
 	GetAll(MovieFilter) ([]models.Movie, error)
 	Delete(id uint) error
-	UpdatePUT(movie *models.Movie) error
-	exists() (bool, error)
+	UpdatePATCH(movie *models.Movie) error
+	Exists(id uint) (bool, error)
 }
 
 type gormMovieRepository struct {
@@ -35,7 +35,7 @@ func (r *gormMovieRepository) Create(movie *models.Movie) error {
 		return nil
 	}
 
-	return r.db.Create(&movie).Error
+	return r.db.Create(movie).Error
 }
 
 func (r *gormMovieRepository) GetByID(id uint) (*models.Movie, error) {
@@ -70,7 +70,7 @@ func (r *gormMovieRepository) Delete(id uint) error {
 	return r.db.Delete(&models.Movie{}, id).Error
 }
 
-func (r *gormMovieRepository) UpdatePUT(movie *models.Movie) error {
+func (r *gormMovieRepository) UpdatePATCH(movie *models.Movie) error {
 	if movie == nil {
 		return nil
 	}
@@ -78,10 +78,10 @@ func (r *gormMovieRepository) UpdatePUT(movie *models.Movie) error {
 	return r.db.Save(movie).Error
 }
 
-func (r *gormMovieRepository) exists() (bool, error) {
+func (r *gormMovieRepository) Exists(id uint) (bool, error) {
 	var count int64
 
-	if err := r.db.Model(models.Movie{}).Count(&count).Error; err != nil {
+	if err := r.db.Model(&models.Movie{}).Where("id = ?", id).Count(&count).Error; err != nil {
 		return false, err
 	}
 
