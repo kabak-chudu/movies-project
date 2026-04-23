@@ -18,11 +18,12 @@ func main() {
 	}
 
 	movieRepo := repository.NewMovieRepository(db)
-	// genreRepo := repository.NewGenreRepository(db)
 
 	movieService := services.NewMovieService(movieRepo)
 
 	router := gin.Default()
 	transport.RegisterRoutes(router, movieService)
-	router.Run(":8080")
+	if err := router.Run(":8080"); err != nil {
+		panic(err)
+	}
 }
