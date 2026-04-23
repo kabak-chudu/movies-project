@@ -40,7 +40,7 @@ func (s *movieService) CreateMovie(req *models.CreateMovieRequest) (*models.Movi
 		Title:   *req.Title,
 		Country: *req.Country,
 		Year:    *req.Year,
-		GenreID: *req.GenreID,
+		// GenreID: *req.GenreID,
 	}
 
 	if err := s.movie.Create(movie); err != nil {

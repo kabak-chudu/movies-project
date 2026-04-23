@@ -1,0 +1,31 @@
+# Основная конфигурация
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  # Команда сборки (путь к main.go обычно в cmd/pharmacy)
+  cmd = "go build -o ./tmp/movies-project.exe ./cmd/main.go"
+  
+  # Бинарный файл, который нужно запускать
+  bin = "./tmp/movies-project.exe"
+  
+  # За какими файлами следим
+  include_ext = ["go"]
+  
+  # Директории, которые игнорируем (чтобы не зациклить сборку)
+  exclude_dir = ["tmp", "vendor"]
+  
+  # Задержка перед пересборкой (мс)
+  delay = 1000
+  
+  # Остановить старый бинарник при ошибке новой сборки
+  stop_on_error = true
+
+[log]
+  time = true
+
+[color]
+  main = "magenta"
+  watcher = "cyan"
+  build = "yellow"
+  runner = "green"
