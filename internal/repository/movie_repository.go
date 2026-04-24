@@ -101,7 +101,7 @@ func (r *gormMovieRepository) UpdatePATCH(movie *models.Movie) error {
 }
 
 func (r *gormMovieRepository) Exists(id uint) (bool, error) {
-	r.logger.Debug("repo.movie.Exists", "Debug")
+	r.logger.Debug("repo.movie.Exists")
 	var count int64
 
 	if err := r.db.Model(&models.Movie{}).Where("id = ?", id).Count(&count).Error; err != nil {
