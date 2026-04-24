@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"log/slog"
 	"movies/internal/models"
 
 	"gorm.io/gorm"
@@ -21,27 +22,36 @@ type MovieRepository interface {
 }
 
 type gormMovieRepository struct {
-	db *gorm.DB
+	db     *gorm.DB
+	logger *slog.Logger
 }
 
 func NewMovieRepository(
 	db *gorm.DB,
+	logger *slog.Logger,
 ) MovieRepository {
-	return &gormMovieRepository{db: db}
+	return &gormMovieRepository{db: db, logger: logger}
 }
 
 func (r *gormMovieRepository) Create(movie *models.Movie) error {
+	r.logger.Debug("repo.movie.create")
 	if movie == nil {
 		return nil
 	}
-
-	return r.db.Create(movie).Error
+	if err := r.db.Create(movie).Error; err != nil {
+		r.logger.Error("repo.movie.create", "error", err.Error())
+		return err
+	}
+	return nil
 }
 
 func (r *gormMovieRepository) GetByID(id uint) (*models.Movie, error) {
+	r.logger.Debug("repo.movie.GetByID")
+
 	var movie models.Movie
 
 	if err := r.db.First(&movie, id).Error; err != nil {
+		r.logger.Error("repo.movie.create", "error", err.Error(), "id", id)
 		return nil, err
 	}
 
@@ -49,6 +59,8 @@ func (r *gormMovieRepository) GetByID(id uint) (*models.Movie, error) {
 }
 
 func (r *gormMovieRepository) GetAll(filter MovieFilter) ([]models.Movie, error) {
+	r.logger.Debug("repo.movie.GetAll")
+
 	var movies []models.Movie
 
 	query := r.db.Model(&models.Movie{})
@@ -60,6 +72,7 @@ func (r *gormMovieRepository) GetAll(filter MovieFilter) ([]models.Movie, error)
 		query = query.First(&models.Movie{}).Where("year = ?", filter.Year)
 	}
 	if err := query.Find(&movies).Error; err != nil {
+		r.logger.Error("repo.movie.GetAll", "error", err.Error())
 		return nil, err
 	}
 
@@ -67,21 +80,32 @@ func (r *gormMovieRepository) GetAll(filter MovieFilter) ([]models.Movie, error)
 }
 
 func (r *gormMovieRepository) Delete(id uint) error {
-	return r.db.Delete(&models.Movie{}, id).Error
+	r.logger.Debug("repo.movie.Delete")
+	if err := r.db.Delete(&models.Movie{}, id).Error; err != nil {
+		r.logger.Error("repo.movie.Delete", "error", err.Error(), "id", id)
+		return err
+	}
+	return nil
 }
 
 func (r *gormMovieRepository) UpdatePATCH(movie *models.Movie) error {
+	r.logger.Debug("repo.movie.Update")
 	if movie == nil {
 		return nil
 	}
-
-	return r.db.Save(movie).Error
+	if err := r.db.Save(movie).Error; err != nil {
+		r.logger.Error("repo.movie.Update", "error", err.Error())
+		return err
+	}
+	return nil
 }
 
 func (r *gormMovieRepository) Exists(id uint) (bool, error) {
+	r.logger.Debug("repo.movie.Exists")
 	var count int64
 
 	if err := r.db.Model(&models.Movie{}).Where("id = ?", id).Count(&count).Error; err != nil {
+		r.logger.Error("repo.movie.Exists", "error", err.Error(), "id", id)
 		return false, err
 	}
 
