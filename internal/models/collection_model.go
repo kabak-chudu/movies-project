@@ -5,7 +5,8 @@ import "gorm.io/gorm"
 type Collection struct {
 	gorm.Model
 	Name	string	`json:"name"`
-	UserID	uint	`json:"user_id"`
+	User	User 	`json:"-"`
+	UserID	uint 	`json:"user_id" gorm:"not null;index"`
 	Movies	[]Movie	`json:"movies" gorm:"many2many:collection_movies;"`
 }
 
@@ -15,11 +16,11 @@ type User struct {
 	Collections	[]Collection	`json:"collections"`
 }
 
-type CollectionCreate struct {
+type CollectionCreateRequest struct {
 	Name	string	`json:"name" binding:"required"`
 	UserID	uint	`json:"user_id" binding:"required"`
 }
 
-type AddMovie struct {
+type CollectionUpdateRequest struct {
 	MovieID	uint	`json:"movie_id" binding:"required"`
 }
