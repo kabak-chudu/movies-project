@@ -21,6 +21,6 @@ type CollectionCreateRequest struct {
 	UserID	uint	`json:"user_id" binding:"required"`
 }
 
-type CollectionUpdateRequest struct {
+type CollectionAddRequest struct {
 	MovieID	uint	`json:"movie_id" binding:"required"`
 }
