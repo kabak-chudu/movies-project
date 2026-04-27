@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var ErrGroupNotFound = errors.New("Коллекция не найдена")
+var ErrCollectionNotFound = errors.New("Коллекция не найдена")
 
 type CollectionService interface {
 	CreateCollection(req models.CollectionCreateRequest) (*models.Collection, error) 
@@ -59,7 +59,7 @@ func (s *collectionService) GetCollectionByID(id uint) (*models.Collection, erro
 	collection, err := s.collection.GetByID(id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, ErrGroupNotFound
+			return nil, ErrCollectionNotFound
 		}
 
 		return nil, err
@@ -72,7 +72,7 @@ func (s *collectionService) AddMovieToCollection(collID, movieID uint, req model
 	collection, err := s.collection.GetByID(collID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, err
+			return nil, ErrCollectionNotFound
 		}
 
 		return nil, err
@@ -81,7 +81,7 @@ func (s *collectionService) AddMovieToCollection(collID, movieID uint, req model
 	movie, err := s.movie.GetByID(movieID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, err
+			return nil, ErrMovieNotFound
 		}
 
 		return nil, err
@@ -98,7 +98,7 @@ func (s *collectionService) RemoveMovieFromCollection(collID, movieID uint) erro
 	collection, err := s.collection.GetByID(collID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return ErrGroupNotFound
+			return ErrCollectionNotFound
 		}
 
 		return err
@@ -107,7 +107,7 @@ func (s *collectionService) RemoveMovieFromCollection(collID, movieID uint) erro
 	movie, err := s.movie.GetByID(movieID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return err
+			return ErrMovieNotFound
 		}
 
 		return err
