@@ -6,7 +6,7 @@ import (
 )
 
 type GenereService interface {
-	CreateGener(req *models.CreateGenreRequest) (*models.Genre, error)
+	CreateGenere(req *models.CreateGenreRequest) (*models.Genre, error)
 	GetGenerByID(id uint) (*models.Genre, error)
 	GetAllGeneres() ([]models.Genre, error)
 	DeleteGener(id uint) error
@@ -22,7 +22,7 @@ func NewGenereteService(
 ) GenereService {
 	return &genereService{genreRepo: genreRepo}
 }
-func (c *genereService) CreateGener(req *models.CreateGenreRequest) (*models.Genre, error) {
+func (c *genereService) CreateGenere(req *models.CreateGenreRequest) (*models.Genre, error) {
 	gener := &models.Genre{
 		Name: *req.Name,
 	}
