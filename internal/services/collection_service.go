@@ -4,17 +4,16 @@ import (
 	"errors"
 	"movies/internal/models"
 	"movies/internal/repository"
-
 	"gorm.io/gorm"
 )
 
-var ErrCollectionNotFound = errors.New("Коллекция не найдена")
+var ErrCollectionNotFound = errors.New("коллекция не найдена")
 
 type CollectionService interface {
 	CreateCollection(req models.CollectionCreateRequest) (*models.Collection, error) 
 	GetAllCollections() ([]models.Collection, error)
 	GetCollectionByID(id uint) (*models.Collection, error)
-	AddMovieToCollection(collID, movieID uint, req models.CollectionAddRequest) (*models.Collection, error)
+	AddMovieToCollection(collID uint, req models.CollectionAddRequest) (*models.Collection, error)
 	RemoveMovieFromCollection(collID, movieID uint) error
 
 }
@@ -52,7 +51,11 @@ func (s *collectionService) CreateCollection(req models.CollectionCreateRequest)
 }
 
 func (s *collectionService) GetAllCollections() ([]models.Collection, error) {
-	return s.collection.GetAll()
+	collection, err := s.collection.GetAll(); if err != nil {
+		return nil, err
+	}
+
+	return collection, nil
 }
 
 func (s *collectionService) GetCollectionByID(id uint) (*models.Collection, error) {
@@ -65,27 +68,31 @@ func (s *collectionService) GetCollectionByID(id uint) (*models.Collection, erro
 		return nil, err
 	}
 
-	return collection, err
+	return collection, nil
 }
 
-func (s *collectionService) AddMovieToCollection(collID, movieID uint, req models.CollectionAddRequest) (*models.Collection, error) {
+func (s *collectionService) AddMovieToCollection(collID uint, req models.CollectionAddRequest) (*models.Collection, error) {
 	collection, err := s.collection.GetByID(collID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ErrCollectionNotFound
 		}
-
 		return nil, err
 	}
 
-	movie, err := s.movie.GetByID(movieID)
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, ErrMovieNotFound
-		}
+	movie, err := s.movie.GetByID(req.MovieID)
+    if err != nil {
+        if errors.Is(err, gorm.ErrRecordNotFound) {
+            return nil, ErrMovieNotFound
+        }
+        return nil, err
+    }
 
-		return nil, err
-	}
+	for _, m := range collection.Movies {
+        if m.ID == movie.ID {
+            return nil, errors.New("фильм уже есть в этой подборке")
+        }
+    }
 
 	if err := s.collection.AddMovie(collection, movie); err != nil {
 		return nil, err
@@ -100,29 +107,34 @@ func (s *collectionService) RemoveMovieFromCollection(collID, movieID uint) erro
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return ErrCollectionNotFound
 		}
-
 		return err
 	}
-
-	movie, err := s.movie.GetByID(movieID)
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return ErrMovieNotFound
+	
+	var found bool
+	for _, m := range collection.Movies {
+		if m.ID == movieID {
+			found = true
+			break
 		}
-
-		return err
 	}
+
+	if !found {
+		return ErrMovieNotFound
+	}
+
+	movie := &models.Movie{}
+	movie.ID = movieID
 
 	return s.collection.RemoveMovie(collection, movie)
 }
 
 func (s *collectionService) validateCollectionCreate(req models.CollectionCreateRequest) error {
 	if req.Name == "" {
-		return errors.New("Поле name не должно быть пустым")
+		return errors.New("поле name не должно быть пустым")
 	}
 
 	if req.UserID <= 0 {
-		return errors.New("Поле UserID не должно быть равно или меньше 0")
+		return errors.New("поле UserID не должно быть равно или меньше 0")
 	}
 
 	return nil
