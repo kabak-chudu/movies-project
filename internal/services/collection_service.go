@@ -11,26 +11,25 @@ import (
 var ErrCollectionNotFound = errors.New("Коллекция не найдена")
 
 type CollectionService interface {
-	CreateCollection(req models.CollectionCreateRequest) (*models.Collection, error) 
+	CreateCollection(req models.CollectionCreateRequest) (*models.Collection, error)
 	GetAllCollections() ([]models.Collection, error)
 	GetCollectionByID(id uint) (*models.Collection, error)
 	AddMovieToCollection(collID, movieID uint, req models.CollectionAddRequest) (*models.Collection, error)
 	RemoveMovieFromCollection(collID, movieID uint) error
-
 }
 
 type collectionService struct {
-	collection	repository.CollectionRepository
-	movie		repository.MovieRepository
+	collection repository.CollectionRepository
+	movie      repository.MovieRepository
 }
 
 func NewCollectionService(
 	collection repository.CollectionRepository,
 	movie repository.MovieRepository,
-	) CollectionService {
+) CollectionService {
 	return &collectionService{
 		collection: collection,
-		movie: movie,
+		movie:      movie,
 	}
 }
 
@@ -40,7 +39,7 @@ func (s *collectionService) CreateCollection(req models.CollectionCreateRequest)
 	}
 
 	newCollection := &models.Collection{
-		Name: req.Name,
+		Name:   req.Name,
 		UserID: req.UserID,
 	}
 
