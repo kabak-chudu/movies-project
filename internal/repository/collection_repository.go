@@ -36,7 +36,7 @@ func (r *collectionRepository) Create(c *models.Collection) error {
 func (r *collectionRepository) GetAll() ([]models.Collection, error) {
 	var collections []models.Collection
 
-	if err := r.db.Find(&collections).Error; err != nil {
+	if err := r.db.Preload("Movies").Find(&collections).Error; err != nil {
 		return nil, err
 	}
 
