@@ -13,7 +13,6 @@ type Collection struct {
 type User struct {
 	gorm.Model
 	Username	string			`json:"username"`
-	Collections	[]Collection	`json:"collections"`
 }
 
 type CollectionCreateRequest struct {
