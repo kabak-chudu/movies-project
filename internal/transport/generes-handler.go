@@ -19,30 +19,30 @@ func NewGenerHandler(
 	return &GenerHandler{gener: gener}
 }
 
-func (h *GenerHandler) RigisterRoutes(router *gin.Engine){
+func (h *GenerHandler) RigisterRoutes(router *gin.Engine) {
 	gener := router.Group("/generes")
-{
-	gener.POST("/", h.CreateGenere)
-	gener.GET("/", h.GetAllGeneres)
-	gener.GET("/:id", h.GetGenerByID)
-	gener.PATCH("/:id", h.UpdatePATCHGener)
-	gener.DELETE("/:id", h.DeleteGener)
-}
+	{
+		gener.POST("/", h.CreateGenere)
+		gener.GET("/", h.GetAllGeneres)
+		gener.GET("/:id", h.GetGenerByID)
+		gener.PATCH("/:id", h.UpdatePATCHGener)
+		gener.DELETE("/:id", h.DeleteGener)
+	}
 }
 
 func (h *GenerHandler) CreateGenere(ctx *gin.Context) {
 	var req models.CreateGenreRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return 
+		return
 	}
 	gener, err := h.gener.CreateGenere(&req)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error":err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusCreated, gener)
-}	
+}
 
 func (h *GenerHandler) GetGenerByID(ctx *gin.Context) {
 	idParam, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
@@ -61,13 +61,13 @@ func (h *GenerHandler) GetGenerByID(ctx *gin.Context) {
 func (h *GenerHandler) GetAllGeneres(ctx *gin.Context) {
 	generes, err := h.gener.GetAllGeneres()
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error":err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusOK, generes)
 }
 
-func (h *GenerHandler) UpdatePATCHGener(ctx *gin.Context){
+func (h *GenerHandler) UpdatePATCHGener(ctx *gin.Context) {
 	idParam, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -78,7 +78,7 @@ func (h *GenerHandler) UpdatePATCHGener(ctx *gin.Context){
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	gener, err := h.gener.UpdatePATCHGener(uint(idParam),  &models.UpdateGenreRequest{Name: req.Name})
+	gener, err := h.gener.UpdatePATCHGener(uint(idParam), &models.UpdateGenreRequest{Name: req.Name})
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -97,5 +97,5 @@ func (h *GenerHandler) DeleteGener(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"messege": "Успешно удалена!"})
-	
+
 }

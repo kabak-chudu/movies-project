@@ -21,36 +21,36 @@ func NewReviewRepository(db *gorm.DB) ReviewRepository {
 	return &gormReviewRepository{db: db}
 }
 
-func (c *gormReviewRepository) Creat(review *models.Review) error {
+func (r *gormReviewRepository) Creat(review *models.Review) error {
 	if review == nil {
 		return nil
 	}
-	return c.db.Create(review).Error
+	return r.db.Create(review).Error
 }
 
-func (g *gormReviewRepository) GetByID(id uint) (*models.Review, error) {
+func (r *gormReviewRepository) GetByID(id uint) (*models.Review, error) {
 	var review models.Review
-	if err := g.db.First(&review, id).Error; err != nil {
+	if err := r.db.First(&review, id).Error; err != nil {
 		return nil, err
 	}
 	return &review, nil
 }
 
-func (g *gormReviewRepository) GetAll() ([]models.Review, error) {
+func (r *gormReviewRepository) GetAll() ([]models.Review, error) {
 	var reviews []models.Review
-	if err := g.db.Find(&reviews).Error; err != nil{
+	if err := r.db.Find(&reviews).Error; err != nil{
 		return nil, err
 	}
 	return reviews, nil
 }
 
-func (d *gormReviewRepository) Delete(id uint) error {
-	return d.db.Delete(&models.Review{}, id).Error
+func (r *gormReviewRepository) Delete(id uint) error {
+	return r.db.Delete(&models.Review{}, id).Error
 }
 
-func (u *gormReviewRepository) Update(review *models.Review) error {
+func (r *gormReviewRepository) Update(review *models.Review) error {
 	if review == nil {
 		return nil
 	}
-	return u.db.Save(&review).Error
+	return r.db.Save(&review).Error
 }

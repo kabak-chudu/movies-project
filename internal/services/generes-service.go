@@ -22,11 +22,11 @@ func NewGenereteService(
 ) GenereService {
 	return &genereService{genreRepo: genreRepo}
 }
-func (c *genereService) CreateGenere(req *models.CreateGenreRequest) (*models.Genre, error) {
+func (s *genereService) CreateGenere(req *models.CreateGenreRequest) (*models.Genre, error) {
 	gener := &models.Genre{
 		Name: *req.Name,
 	}
-	if err := c.genreRepo.Create(gener); err != nil {
+	if err := s.genreRepo.Create(gener); err != nil {
 		return nil, err
 	}
 	return gener, nil
@@ -45,18 +45,18 @@ func (s *genereService) GetAllGeneres() ([]models.Genre, error) {
 	}
 	return generes, nil
 }
-func (d *genereService) DeleteGener(id uint) error {
-	return d.genreRepo.Delete(id)
+func (s *genereService) DeleteGener(id uint) error {
+	return s.genreRepo.Delete(id)
 }
-func (u *genereService) UpdatePATCHGener(id uint, req *models.UpdateGenreRequest) (*models.Genre, error) {
-	gener, err := u.genreRepo.FindByID(id)
+func (s *genereService) UpdatePATCHGener(id uint, req *models.UpdateGenreRequest) (*models.Genre, error) {
+	gener, err := s.genreRepo.FindByID(id)
 	if err != nil {
 		return nil, err
 	}
 	if req.Name != nil {
 		gener.Name = *req.Name
 	}
-	if err := u.genreRepo.Update(gener); err != nil {
+	if err := s.genreRepo.Update(gener); err != nil {
 		return nil, err
 	}
 	return gener, nil

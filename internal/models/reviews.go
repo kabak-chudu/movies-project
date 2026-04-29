@@ -8,6 +8,7 @@ type Review struct {
 	gorm.Model
 	Rating  int    `json:"rating"`
 	Comment string `json:"comment"`
+	Movie   *Movie `json:"-"`
 	MovieID uint   `json:"movie_id" gorm:"not null;index"`
 }
 type CreateReviewRequest struct {
