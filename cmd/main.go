@@ -25,14 +25,12 @@ func main() {
 
 	movieRepo := repository.NewMovieRepository(db, logger)
 	collectionRepo := repository.NewCollectionRepository(db)
-	userRepo := repository.NewUserRepository(db)
 
 	movieService := services.NewMovieService(movieRepo, logger)
 	collectionService := services.NewCollectionService(collectionRepo, movieRepo)
-	userService := services.NewUserService(userRepo)
 
 	router := gin.Default()
-	transport.RegisterRoutes(router, movieService, collectionService, userService, logger)
+	transport.RegisterRoutes(router, movieService, collectionService, logger)
 
 	port := ":8080"
 	logger.Info("server started",
