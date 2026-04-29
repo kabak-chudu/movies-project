@@ -66,13 +66,13 @@ func (h *CollectionHandler) GetByID(c *gin.Context) {
 }
 
 func (h *CollectionHandler) GetAll(c *gin.Context) {
-	collection, err := h.collection.GetAllCollections()
+	collections, err := h.collection.GetAllCollections()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, collection)
+	c.IndentedJSON(http.StatusOK, collections)
 }
 
 func (h *CollectionHandler) AddMovie(c *gin.Context) {

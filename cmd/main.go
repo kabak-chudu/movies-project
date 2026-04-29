@@ -8,7 +8,6 @@ import (
 	"movies/internal/services"
 	"movies/internal/transport"
 	"os"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,21 +23,16 @@ func main() {
 		panic(err)
 	}
 
-	var count int64
-	db.Model(&models.User{}).Count(&count)
-	if count == 0 {
-    	db.Create(&models.User{Username: "test_user"})
-    	fmt.Println("тестовый пользователь создан (ID: 1)")
-	}
-
 	movieRepo := repository.NewMovieRepository(db, logger)
 	collectionRepo := repository.NewCollectionRepository(db)
+	userRepo := repository.NewUserRepository(db)
 
 	movieService := services.NewMovieService(movieRepo, logger)
 	collectionService := services.NewCollectionService(collectionRepo, movieRepo)
+	userService := services.NewUserService(userRepo)
 
 	router := gin.Default()
-	transport.RegisterRoutes(router, movieService, collectionService, logger)
+	transport.RegisterRoutes(router, movieService, collectionService, userService, logger)
 
 	port := ":8080"
 	logger.Info("server started",
