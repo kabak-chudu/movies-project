@@ -16,7 +16,7 @@ type CreateReviewRequest struct {
 	MovieID *uint   `json:"movie_id"`
 }
 type UpdateReviewRequest struct {
-	Reting  *int    `json:"rating"`
+	Rating  *int    `json:"rating"`
 	Comment *string `json:"comment"`
 	MovieID *uint   `json:"movie_id"`
 }

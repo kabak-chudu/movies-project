@@ -23,10 +23,10 @@ func (h *GenerHandler) RigisterRoutes(router *gin.Engine){
 	gener := router.Group("/generes")
 {
 	gener.POST("/", h.CreateGenere)
-	gener.GET("/", )
-	gener.GET("/:id",)
-	gener.PATCH("/:id",)
-	gener.DELETE("/:id",)
+	gener.GET("/", h.GetAllGeneres)
+	gener.GET("/:id", h.GetGenerByID)
+	gener.PATCH("/:id", h.UpdatePATCHGener)
+	gener.DELETE("/:id", h.DeleteGener)
 }
 }
 
