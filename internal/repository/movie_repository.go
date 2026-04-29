@@ -50,8 +50,8 @@ func (r *gormMovieRepository) GetByID(id uint) (*models.Movie, error) {
 
 	var movie models.Movie
 
-	if err := r.db.First(&movie, id).Error; err != nil {
-		r.logger.Error("repo.movie.create", "error", err.Error(), "id", id)
+	if err := r.db.Preload("Genre").First(&movie, id).Error; err != nil {
+		r.logger.Error("repo.movie.GetByID", "error", err.Error(), "id", id)
 		return nil, err
 	}
 
@@ -63,13 +63,13 @@ func (r *gormMovieRepository) GetAll(filter MovieFilter) ([]models.Movie, error)
 
 	var movies []models.Movie
 
-	query := r.db.Model(&models.Movie{})
+	query := r.db.Model(&models.Movie{}).Preload("Genre")
 
 	if filter.GenreID != nil {
-		query = query.First(&models.Movie{}).Where("genre_id = ?", filter.GenreID)
+		query = query.Where("genre_id = ?", filter.GenreID)
 	}
 	if filter.Year != nil {
-		query = query.First(&models.Movie{}).Where("year = ?", filter.Year)
+		query = query.Where("year = ?", filter.Year)
 	}
 	if err := query.Find(&movies).Error; err != nil {
 		r.logger.Error("repo.movie.GetAll", "error", err.Error())
