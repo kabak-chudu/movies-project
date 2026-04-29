@@ -1,11 +1,49 @@
 package main
 
 import (
-	"fmt"
+	"log/slog"
 	"movies/internal/config"
+	"movies/internal/models"
+	"movies/internal/repository"
+	"movies/internal/services"
+	"movies/internal/transport"
+	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
+
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}))
+
 	db := config.SetDatabaseConnection()
-	fmt.Println(db) // временно
+
+	env := os.Getenv("ENV")
+
+	if err := db.AutoMigrate(&models.Movie{}, &models.Genre{}, &models.Review{}); err != nil {
+		panic(err)
+	}
+
+	movieRepo := repository.NewMovieRepository(db, logger)
+
+	movieService := services.NewMovieService(movieRepo, logger)
+
+	generRepo := repository.NewGenereRepository(db)
+	generService := services.NewGenereteService(generRepo)
+
+	reviewsRepo := repository.NewReviewRepository(db)
+	reviewsSevice := services.NewReviewService(reviewsRepo)
+
+	router := gin.Default()
+	transport.RegisterRoutes(router, movieService, logger, generService, reviewsSevice)
+
+	port := ":8080"
+	logger.Info("server started",
+		"addr=", port,
+		"env=", env,
+	)
+	if err := router.Run(port); err != nil {
+		panic(err)
+	}
+
 }
