@@ -41,7 +41,7 @@ func (r *gormRegisterRepository) checkUsername(req *models.User) error {
 	}
 
 	if count > 0 {
-		return errors.New("Пользователь с таким Username уже существует")
+		return errors.New("пользователь с таким Username уже существует")
 	}
 
 	return nil
