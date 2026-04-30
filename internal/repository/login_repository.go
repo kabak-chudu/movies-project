@@ -28,7 +28,7 @@ func (r *gormLoginRepository) Login(user *models.Login) error {
 		return err
 	}
 
-	return r.db.Create(&user).Error
+	return nil
 }
 
 func (r *gormLoginRepository) check(req *models.Login) error {
