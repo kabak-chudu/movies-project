@@ -10,11 +10,20 @@ func RegisterRoutes(
 	router *gin.Engine,
 	movie services.MovieService,
 	collection services.CollectionService,
-	logger *slog.Logger,
+	genere services.GenereService,
+	review services.ReviewService,
+  logger *slog.Logger
 ) {
 	movieHandler := NewMovieHandler(movie, logger)
-	collectionHandler := NewCollectionHandler(collection)
-
 	movieHandler.RegisterRoutes(router)
-	collectionHandler.RegisterRoutes(router)
+  
+	collectionHandler := NewCollectionHandler(collection)
+  collectionHandler.RegisterRoutes(router)
+  
+	reviewHandler := NewReviewHandler(review)
+	reviewHandler.RigisterRoutes(router)
+  
+	genereHandler := NewGenerHandler(genere)
+	genereHandler.RigisterRoutes(router)
+
 }
