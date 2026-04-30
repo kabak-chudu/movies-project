@@ -29,15 +29,17 @@ func main() {
 	generRepo := repository.NewGenereRepository(db)
 	reviewsRepo := repository.NewReviewRepository(db)
 	registerRepo := repository.NewRegisterRepository(db)
+	loginRepo := repository.NewLoginRepository(db)
 
 	movieService := services.NewMovieService(movieRepo, generRepo, logger)
 	collectionService := services.NewCollectionService(collectionRepo, movieRepo)
 	generService := services.NewGenereteService(generRepo)
 	reviewService := services.NewReviewService(reviewsRepo)
 	registerService := services.NewRegisterService(registerRepo)
+	loginService := services.NewLoginService(loginRepo)
 
 	router := gin.Default()
-	transport.RegisterRoutes(router, movieService, collectionService, generService, reviewService, registerService, logger)
+	transport.RegisterRoutes(router, movieService, collectionService, generService, reviewService, registerService, loginService, logger)
 
 	port := ":8080"
 	logger.Info("server started",
