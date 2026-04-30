@@ -13,6 +13,7 @@ func RegisterRoutes(
 	collection services.CollectionService,
 	genere services.GenereService,
 	review services.ReviewService,
+	register services.RegisterService,
 	logger *slog.Logger,
 ) {
 	movieHandler := NewMovieHandler(movie, logger)
@@ -27,4 +28,6 @@ func RegisterRoutes(
 	genereHandler := NewGenerHandler(genere)
 	genereHandler.RigisterRoutes(router)
 
+	registerHandler := NewRegisterHandler(register)
+	registerHandler.RegisterRoutes(router)
 }

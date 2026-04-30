@@ -40,17 +40,17 @@ func (s *registerService) Register(req *models.UserCreateRequest) (*models.User,
 
 func (s *registerService) validateCreate(req *models.UserCreateRequest) error {
 	if req.Username == nil {
-		return errors.New("Username обязательно должен быть")
+		return errors.New("username обязательно должен быть")
 	}
 	if *req.Username == "" {
-		return errors.New("Username не должен быть пустым")
+		return errors.New("username не должен быть пустым")
 	}
 
 	if req.Password == nil {
-		return errors.New("Password обязательно должен быть")
+		return errors.New("password обязательно должен быть")
 	}
 	if *req.Password == "" {
-		return errors.New("Password не должен быть пустым")
+		return errors.New("password не должен быть пустым")
 	}
 	return nil
 }
