@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"movies/internal/models"
 	"movies/internal/repository"
+
+	"gorm.io/gorm"
 )
 
 type LoginService interface {
 	Login(*models.Login) (*models.User, error)
+	GetByID(id uint) (*models.User, error)
 }
 
 type loginService struct {
@@ -33,6 +36,18 @@ func (s *loginService) Login(req *models.Login) (*models.User, error) {
 
 	if err := s.login.Login(user); err != nil {
 		return nil, errors.New("username или password неверные")
+	}
+
+	return user, nil
+}
+
+func (s *loginService) GetByID(id uint) (*models.User, error) {
+	user, err := s.login.GetByID(id)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("user по айди не существует")
+		}
+		return nil, err
 	}
 
 	return user, nil
