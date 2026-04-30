@@ -32,7 +32,7 @@ func (s *loginService) Login(req *models.Login) (*models.User, error) {
 	}
 
 	if err := s.login.Login(user); err != nil {
-		return nil, fmt.Errorf("неверные данные: %w", err)
+		return nil, errors.New("username или password неверные")
 	}
 
 	return user, nil
