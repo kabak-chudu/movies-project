@@ -4,6 +4,7 @@ import (
 	"errors"
 	"movies/internal/models"
 	"movies/internal/repository"
+
 	"gorm.io/gorm"
 )
 
@@ -39,7 +40,7 @@ func (s *collectionService) CreateCollection(req models.CollectionCreateRequest)
 
 	newCollection := &models.Collection{
 		Name: req.Name,
-	//	UserID: req.UserID,
+		//	UserID: req.UserID,
 	}
 
 	if err := s.collection.Create(newCollection); err != nil {
@@ -50,7 +51,8 @@ func (s *collectionService) CreateCollection(req models.CollectionCreateRequest)
 }
 
 func (s *collectionService) GetAllCollections() ([]models.Collection, error) {
-	collection, err := s.collection.GetAll(); if err != nil {
+	collection, err := s.collection.GetAll()
+	if err != nil {
 		return nil, err
 	}
 
@@ -80,18 +82,18 @@ func (s *collectionService) AddMovieToCollection(collID uint, req models.Collect
 	}
 
 	movie, err := s.movie.GetByID(req.MovieID)
-    if err != nil {
-        if errors.Is(err, gorm.ErrRecordNotFound) {
-            return nil, ErrMovieNotFound
-        }
-        return nil, err
-    }
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrMovieNotFound
+		}
+		return nil, err
+	}
 
 	for _, m := range collection.Movies {
-        if m.ID == movie.ID {
-            return nil, errors.New("фильм уже есть в этой подборке")
-        }
-    }
+		if m.ID == movie.ID {
+			return nil, errors.New("фильм уже есть в этой подборке")
+		}
+	}
 
 	if err := s.collection.AddMovie(collection, movie); err != nil {
 		return nil, err
@@ -108,7 +110,7 @@ func (s *collectionService) RemoveMovieFromCollection(collID, movieID uint) erro
 		}
 		return err
 	}
-	
+
 	var found bool
 	for _, m := range collection.Movies {
 		if m.ID == movieID {

@@ -8,7 +8,7 @@ type Genre struct {
 }
 
 type CreateGenreRequest struct {
-	Name *string `json:"name"`
+	Name *string `json:"name" binding:"required"`
 }
 
 type UpdateGenreRequest struct {

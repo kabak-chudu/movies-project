@@ -30,7 +30,7 @@ func NewMovieService(
 	genre repository.GenereRepository,
 	logger *slog.Logger,
 ) MovieService {
-	return &movieService{movie: movie, logger: logger}
+	return &movieService{movie: movie, logger: logger, genre: genre}
 }
 
 func (s *movieService) CreateMovie(req *models.CreateMovieRequest) (*models.Movie, error) {
@@ -189,7 +189,7 @@ func (s *movieService) validCreate(req *models.CreateMovieRequest) error {
 	_, err := s.genre.FindByID(*req.GenreID)
 	if err != nil {
 		if errors.Is(err, ErrGenreNotFound) {
-			return err
+			return errors.New("такого жанра по айди не существует")
 		}
 		return err
 	}
