@@ -113,8 +113,8 @@ func (h *MovieHandler) GetAllMovies(ctx *gin.Context) {
 			)
 			return
 		}
-		// genreId := uint(genreID)
-		// filter.GenreID = &genreId
+		genreId := uint(genreID)
+		filter.GenreID = &genreId
 	}
 	yearQuery := ctx.Query("year")
 	if yearQuery != "" {

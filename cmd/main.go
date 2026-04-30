@@ -20,16 +20,22 @@ func main() {
 
 	env := os.Getenv("ENV")
 
-	if err := db.AutoMigrate(&models.Movie{}); err != nil {
+	if err := db.AutoMigrate(&models.Movie{}, &models.Genre{}, &models.Review{}); err != nil {
 		panic(err)
 	}
 
 	movieRepo := repository.NewMovieRepository(db, logger)
+	collectionRepo := repository.NewCollectionRepository(db)
+	generRepo := repository.NewGenereRepository(db)
+	reviewsRepo := repository.NewReviewRepository(db)
 
-	movieService := services.NewMovieService(movieRepo, logger)
+	movieService := services.NewMovieService(movieRepo, generRepo, logger)
+	collectionService := services.NewCollectionService(collectionRepo, movieRepo)
+	generService := services.NewGenereteService(generRepo)
+	reviewService := services.NewReviewService(reviewsRepo)
 
 	router := gin.Default()
-	transport.RegisterRoutes(router, movieService, logger)
+	transport.RegisterRoutes(router, movieService, collectionService, generService, reviewService, logger)
 
 	port := ":8080"
 	logger.Info("server started",

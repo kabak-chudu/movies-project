@@ -8,7 +8,7 @@ import (
 )
 
 type MovieFilter struct {
-	// GenreID *uint
+	GenreID *uint
 	Year    *int
 }
 
@@ -50,7 +50,7 @@ func (r *gormMovieRepository) GetByID(id uint) (*models.Movie, error) {
 
 	var movie models.Movie
 
-	if err := r.db./*Preload("Genre")*/First(&movie, id).Error; err != nil {
+	if err := r.db.Preload("Genre").First(&movie, id).Error; err != nil {
 		r.logger.Error("repo.movie.GetByID", "error", err.Error(), "id", id)
 		return nil, err
 	}
@@ -63,11 +63,11 @@ func (r *gormMovieRepository) GetAll(filter MovieFilter) ([]models.Movie, error)
 
 	var movies []models.Movie
 
-	query := r.db.Model(&models.Movie{})/*.Preload("Genre")*/
+	query := r.db.Model(&models.Movie{}).Preload("Genre")
 
-	// if filter.GenreID != nil {
-	// 	query = query.Where("genre_id = ?", filter.GenreID)
-	// }
+	if filter.GenreID != nil {
+		query = query.Where("genre_id = ?", filter.GenreID)
+	}
 	if filter.Year != nil {
 		query = query.Where("year = ?", filter.Year)
 	}

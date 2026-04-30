@@ -7,22 +7,22 @@ type Movie struct {
 	Title   string `json:"title"`
 	Country string `json:"country"`
 	Year    int    `json:"year"`
-	// Genre   *Genre `json:"-"`
-	// GenreID uint `json:"genre_id" gorm:"not null;index"`
+	Genre   *Genre `json:"-"`
+	GenreID uint `json:"genre_id" gorm:"not null;index"`
 }
 
 type CreateMovieRequest struct {
 	Title   *string `json:"title"`
 	Country *string `json:"country"`
 	Year    *int    `json:"year"`
-	// Genre   *Genre  `json:"-"`
-	// GenreID *uint `json:"genre_id"`
+	Genre   *Genre  `json:"-"`
+	GenreID *uint `json:"genre_id"`
 }
 
 type UpdateMovieRequest struct {
 	Title   *string `json:"title"`
 	Country *string `json:"country"`
 	Year    *int    `json:"year"`
-	// Genre   *Genre  `json:"-"`
-	// GenreID *uint `json:"genre_id"`
+	Genre   *Genre  `json:"-"`
+	GenreID *uint `json:"genre_id"`
 }

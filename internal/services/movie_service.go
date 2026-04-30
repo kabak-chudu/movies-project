@@ -22,13 +22,13 @@ type MovieService interface {
 type movieService struct {
 	movie  repository.MovieRepository
 	logger *slog.Logger
-	// genre repository.GenreRepository
+	genre  repository.GenereRepository
 }
 
 func NewMovieService(
 	movie repository.MovieRepository,
+	genre repository.GenereRepository,
 	logger *slog.Logger,
-	// genre repository.GenreRepository,
 ) MovieService {
 	return &movieService{movie: movie, logger: logger}
 }
@@ -46,7 +46,7 @@ func (s *movieService) CreateMovie(req *models.CreateMovieRequest) (*models.Movi
 		Title:   *req.Title,
 		Country: *req.Country,
 		Year:    *req.Year,
-		// GenreID: *req.GenreID,
+		GenreID: *req.GenreID,
 	}
 
 	if err := s.movie.Create(movie); err != nil {
@@ -162,16 +162,16 @@ func (s *movieService) UpdatePATCHMovie(id uint, req *models.UpdateMovieRequest)
 		movie.Year = *req.Year
 	}
 
-	// if req.GenreID != nil {
-	// 	exists, err := s.genre.Exists(*req.GenreID)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// 	if !exists {
-	// 		return nil, ErrGenreNotFound
-	// 	}
-	// 	movie.GenreID = *req.GenreID
-	// }
+	if req.GenreID != nil {
+		_, err := s.genre.FindByID(*req.GenreID)
+		if err != nil {
+			if errors.Is(err, ErrGenreNotFound) {
+				return nil, err
+			}
+			return nil, err
+		}
+		movie.GenreID = *req.GenreID
+	}
 
 	if err := s.movie.UpdatePATCH(movie); err != nil {
 		s.logger.Error("fail update movie by id", "layer", "service", "error", err.Error(), "movie_id", id)
@@ -183,16 +183,16 @@ func (s *movieService) UpdatePATCHMovie(id uint, req *models.UpdateMovieRequest)
 }
 
 func (s *movieService) validCreate(req *models.CreateMovieRequest) error {
-	// if req.GenreID == nil {
-	// 	return errors.New("для создания фильма надо обязательно указать айди к жанру (genre_id)")
-	// }
-	// exists, err := s.genre.Exists(*req.GenreID)
-	// if err != nil {
-	// 	return err
-	// }
-	// if !exists {
-	// 	return ErrGenreNotFound
-	// }
+	if req.GenreID == nil {
+		return errors.New("для создания фильма надо обязательно указать айди к жанру (genre_id)")
+	}
+	_, err := s.genre.FindByID(*req.GenreID)
+	if err != nil {
+		if errors.Is(err, ErrGenreNotFound) {
+			return err
+		}
+		return err
+	}
 
 	if req.Country == nil {
 		return errors.New("для создания фильма надо обязательно указать страну производства (country)")

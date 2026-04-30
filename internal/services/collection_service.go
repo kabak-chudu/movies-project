@@ -38,8 +38,8 @@ func (s *collectionService) CreateCollection(req models.CollectionCreateRequest)
 	}
 
 	newCollection := &models.Collection{
-		Name:   req.Name,
-		UserID: req.UserID,
+		Name: req.Name,
+	//	UserID: req.UserID,
 	}
 
 	if err := s.collection.Create(newCollection); err != nil {
@@ -132,9 +132,9 @@ func (s *collectionService) validateCollectionCreate(req models.CollectionCreate
 		return errors.New("поле name не должно быть пустым")
 	}
 
-	if req.UserID <= 0 {
-		return errors.New("поле UserID не должно быть равно или меньше 0")
-	}
+	//	if req.UserID <= 0 {
+	//		return errors.New("поле UserID не должно быть равно или меньше 0")
+	//	}
 
 	return nil
 }
