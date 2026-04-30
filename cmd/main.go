@@ -20,7 +20,7 @@ func main() {
 
 	env := os.Getenv("ENV")
 
-	if err := db.AutoMigrate(&models.Genre{}, &models.Movie{}, &models.Review{}, &models.Collection{}, &models.User{}); err != nil {
+	if err := db.AutoMigrate(&models.User{}, &models.Genre{}, &models.Movie{}, &models.Review{}, &models.Collection{}); err != nil {
 		panic(err)
 	}
 
