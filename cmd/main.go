@@ -33,7 +33,7 @@ func main() {
 	generService := services.NewGenereteService(generRepo)
 
 	reviewsRepo := repository.NewReviewRepository(db)
-	reviewsSevice := services.NewReviewService(reviewsRepo)
+	reviewService := services.NewReviewService(reviewsRepo)
 
 	router := gin.Default()
 	transport.RegisterRoutes(router, movieService, collectionService, generService, reviewService, logger)
