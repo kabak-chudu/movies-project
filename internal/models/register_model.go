@@ -1,0 +1,19 @@
+package models
+
+import "gorm.io/gorm"
+
+type User struct {
+	gorm.Model
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type UserCreateRequest struct {
+	Username *string `json:"username"`
+	Password *string `json:"password"`
+}
+
+type UserUpdateRequest struct {
+	Username *string `json:"username"`
+	Password *string `json:"password"`
+}
