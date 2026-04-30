@@ -8,7 +8,6 @@ import (
 	"movies/internal/services"
 	"movies/internal/transport"
 	"os"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,8 +24,10 @@ func main() {
 	}
 
 	movieRepo := repository.NewMovieRepository(db, logger)
+	collectionRepo := repository.NewCollectionRepository(db)
 
 	movieService := services.NewMovieService(movieRepo, logger)
+	collectionService := services.NewCollectionService(collectionRepo, movieRepo)
 
 	generRepo := repository.NewGenereRepository(db)
 	generService := services.NewGenereteService(generRepo)
@@ -35,7 +36,7 @@ func main() {
 	reviewsSevice := services.NewReviewService(reviewsRepo)
 
 	router := gin.Default()
-	transport.RegisterRoutes(router, movieService, logger, generService, reviewsSevice)
+	transport.RegisterRoutes(router, movieService, collectionService, generService, reviewService, logger)
 
 	port := ":8080"
 	logger.Info("server started",
