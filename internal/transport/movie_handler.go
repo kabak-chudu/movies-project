@@ -60,13 +60,13 @@ func (h *MovieHandler) PostMovie(ctx *gin.Context) {
 
 	movie, err := h.movie.CreateMovie(&req)
 	if err != nil {
-		if errors.Is(err, errors.New("такого жанра по айди не существует")) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			h.logger.Error("create movie error",
 				"layer", "handler",
 				"level", "Error",
 				"error", err.Error(),
 			)
-			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			ctx.JSON(http.StatusNotFound, gin.H{"error": "такого жанра по айди не существует"})
 			return
 		}
 		h.logger.Error("create movie error",

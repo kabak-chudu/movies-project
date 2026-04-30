@@ -6,6 +6,8 @@ import (
 	"log/slog"
 	"movies/internal/models"
 	"movies/internal/repository"
+
+	"gorm.io/gorm"
 )
 
 var ErrMovieNotFound error = errors.New("такого фильма по айди не существует")
@@ -188,7 +190,7 @@ func (s *movieService) validCreate(req *models.CreateMovieRequest) error {
 	}
 	_, err := s.genre.FindByID(*req.GenreID)
 	if err != nil {
-		if errors.Is(err, ErrGenreNotFound) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return errors.New("такого жанра по айди не существует")
 		}
 		return err
