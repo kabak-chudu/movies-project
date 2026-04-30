@@ -1,9 +1,8 @@
 package repository
 
 import (
-	"movies/internal/models"
 	"gorm.io/gorm"
-
+	"movies/internal/models"
 )
 
 type CollectionRepository interface {
@@ -12,12 +11,10 @@ type CollectionRepository interface {
 	GetByID(id uint) (*models.Collection, error)
 	AddMovie(c *models.Collection, m *models.Movie) error
 	RemoveMovie(c *models.Collection, m *models.Movie) error
-
 }
 
 type collectionRepository struct {
 	db *gorm.DB
-
 }
 
 func NewCollectionRepository(db *gorm.DB) CollectionRepository {

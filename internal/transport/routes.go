@@ -3,6 +3,7 @@ package transport
 import (
 	"log/slog"
 	"movies/internal/services"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,17 +13,17 @@ func RegisterRoutes(
 	collection services.CollectionService,
 	genere services.GenereService,
 	review services.ReviewService,
-  logger *slog.Logger
+	logger *slog.Logger,
 ) {
 	movieHandler := NewMovieHandler(movie, logger)
 	movieHandler.RegisterRoutes(router)
-  
+
 	collectionHandler := NewCollectionHandler(collection)
-  collectionHandler.RegisterRoutes(router)
-  
+	collectionHandler.RegisterRoutes(router)
+
 	reviewHandler := NewReviewHandler(review)
 	reviewHandler.RigisterRoutes(router)
-  
+
 	genereHandler := NewGenerHandler(genere)
 	genereHandler.RigisterRoutes(router)
 

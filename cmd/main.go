@@ -8,6 +8,7 @@ import (
 	"movies/internal/services"
 	"movies/internal/transport"
 	"os"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,21 +20,19 @@ func main() {
 
 	env := os.Getenv("ENV")
 
-	if err := db.AutoMigrate(&models.Movie{}, &models.Genre{}, &models.Review{}); err != nil {
+	if err := db.AutoMigrate(&models.Genre{}, &models.Movie{}, &models.Review{}, &models.Collection{}); err != nil {
 		panic(err)
 	}
 
 	movieRepo := repository.NewMovieRepository(db, logger)
 	collectionRepo := repository.NewCollectionRepository(db)
-
-	movieService := services.NewMovieService(movieRepo, logger)
-	collectionService := services.NewCollectionService(collectionRepo, movieRepo)
-
 	generRepo := repository.NewGenereRepository(db)
-	generService := services.NewGenereteService(generRepo)
-
 	reviewsRepo := repository.NewReviewRepository(db)
-	reviewsSevice := services.NewReviewService(reviewsRepo)
+
+	movieService := services.NewMovieService(movieRepo, generRepo, logger)
+	collectionService := services.NewCollectionService(collectionRepo, movieRepo)
+	generService := services.NewGenereteService(generRepo)
+	reviewService := services.NewReviewService(reviewsRepo)
 
 	router := gin.Default()
 	transport.RegisterRoutes(router, movieService, collectionService, generService, reviewService, logger)

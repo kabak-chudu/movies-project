@@ -1,11 +1,14 @@
 package repository
 
 import (
+	"errors"
 	"log/slog"
 	"movies/internal/models"
 
 	"gorm.io/gorm"
 )
+
+var ErrMovieNotFound error = errors.New("такого фильма по айди не существует")
 
 type MovieFilter struct {
 	GenreID *uint
@@ -81,10 +84,16 @@ func (r *gormMovieRepository) GetAll(filter MovieFilter) ([]models.Movie, error)
 
 func (r *gormMovieRepository) Delete(id uint) error {
 	r.logger.Debug("repo.movie.Delete")
-	if err := r.db.Delete(&models.Movie{}, id).Error; err != nil {
-		r.logger.Error("repo.movie.Delete", "error", err.Error(), "id", id)
-		return err
+	result := r.db.Delete(&models.Movie{}, id)
+
+	if result.Error != nil {
+		r.logger.Error("repo.movie.Delete", "error", result.Error, "id", id)
+		return result.Error
 	}
+	if result.RowsAffected == 0 {
+		return ErrMovieNotFound
+	}
+
 	return nil
 }
 
