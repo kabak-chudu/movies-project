@@ -18,5 +18,5 @@ type CreateWatchlistRequest struct {
 
 type WatchlistAddRequest struct {
 	Movie   *Movie `json:"-"`
-	MovieID uint   `json:"movie_id" gorm:"not null;index"`
+	MovieID *uint   `json:"movie_id" gorm:"not null;index"`
 }

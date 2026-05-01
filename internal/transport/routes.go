@@ -15,6 +15,7 @@ func RegisterRoutes(
 	review services.ReviewService,
 	register services.RegisterService,
 	login services.LoginService,
+	watchlist services.WatchlistService,
 	logger *slog.Logger,
 ) {
 	movieHandler := NewMovieHandler(movie, logger)
@@ -31,4 +32,7 @@ func RegisterRoutes(
 
 	registerHandler := NewRegisterHandler(register, login)
 	registerHandler.RegisterRoutes(router)
+
+	watchlistHandler := NewWatchListHandler(watchlist)
+	watchlistHandler.RegisterRoutes(router)
 }

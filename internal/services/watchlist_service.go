@@ -12,8 +12,8 @@ var ErrWatchlistNotFound = errors.New("watchlist не найдена")
 
 type WatchlistService interface {
 	CreateWatchList(req models.CreateWatchlistRequest) (*models.Watchlist, error)
-	GetWatchListByUserID(models.Watchlist) (*models.Watchlist, error)
-	AddMovieToWatchList(watchListID uint, req models.WatchlistAddRequest) (*models.Movie, error)
+	GetWatchListByUserID(id uint) (*models.Watchlist, error)
+	AddMovieToWatchList(watchListID uint, req models.WatchlistAddRequest) (*models.Watchlist, error)
 	RemoveWatchlist(watchlistID uint) error
 }
 
@@ -52,8 +52,8 @@ func (s *watchlistService) CreateWatchList(req models.CreateWatchlistRequest) (*
 	return newWatchlist, nil
 }
 
-func (s *watchlistService) GetWatchListByUserID(w models.Watchlist) (*models.Watchlist, error) {
-	watchlist, err := s.watchlist.GetByUserID(w.UserID)
+func (s *watchlistService) GetWatchListByUserID(id uint) (*models.Watchlist, error) {
+	watchlist, err := s.watchlist.GetByUserID(id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("usera по такому айди не существует")
@@ -65,19 +65,23 @@ func (s *watchlistService) GetWatchListByUserID(w models.Watchlist) (*models.Wat
 	return watchlist, nil
 }
 
-func (s *watchlistService) AddMovieToWatchList(watchListID uint, req models.WatchlistAddRequest) (*models.Movie, error) {
-	watchlist, err := s.watchlist.GetByID(watchListID)
+func (s *watchlistService) AddMovieToWatchList(watchListID uint, req models.WatchlistAddRequest) (*models.Watchlist, error) {
+	if req.MovieID == nil {
+		return nil, errors.New("movie_id обязателен")
+	}
+
+	movie, err := s.movie.GetByID(*req.MovieID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, ErrWatchlistNotFound
+			return nil, ErrMovieNotFound
 		}
 		return nil, err
 	}
 
-	movie, err := s.movie.GetByID(req.MovieID)
+	watchlist, err := s.watchlist.GetByID(watchListID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, ErrMovieNotFound
+			return nil, ErrWatchlistNotFound
 		}
 		return nil, err
 	}
@@ -92,7 +96,7 @@ func (s *watchlistService) AddMovieToWatchList(watchListID uint, req models.Watc
 		return nil, err
 	}
 
-	return movie, nil
+	return watchlist, nil
 }
 
 func (s *watchlistService) RemoveWatchlist(watchlistID uint) error {
