@@ -10,6 +10,7 @@ import (
 type WatchlistRepository interface {
 	Create(c *models.Watchlist) error
 	GetByUserID(id uint) (*models.Watchlist, error)
+	GetByID(id uint) (*models.Watchlist, error)
 	RemoveWatchlistByID(id uint) error
 	AddMovie(c *models.Watchlist, m *models.Movie) error
 }
@@ -31,10 +32,20 @@ func (r *gormWatchlistRepository) Create(watchlist *models.Watchlist) error {
 	return nil
 }
 
-func (r *gormWatchlistRepository) GetByUserID(id uint) (*models.Watchlist, error) {
+func (r *gormWatchlistRepository) GetByID(id uint) (*models.Watchlist, error) {
 	var watchlist models.Watchlist
 
 	if err := r.db.Preload("Movies").First(&watchlist, id).Error; err != nil {
+		return nil, err
+	}
+
+	return &watchlist, nil
+}
+
+func (r *gormWatchlistRepository) GetByUserID(id uint) (*models.Watchlist, error) {
+	var watchlist models.Watchlist
+
+	if err := r.db.Preload("Movies").Where("user_id = ?", id).First(&watchlist).Error; err != nil {
 		return nil, err
 	}
 
